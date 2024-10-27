@@ -15,17 +15,19 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Redirect dari home ke halaman daftar siswa
+// Ubah redirect dari home
 Route::get('/', function () {
-    return redirect('/daftarsiswa');
-});
-
-// Route untuk pendaftaran siswa (dapat diakses publik)
-Route::get('/daftarsiswa', CreateCustomer::class)->name('daftarsiswa');
+    return redirect('/login'); // Ubah ke login sebagai default
+})->middleware('guest');
 
 // Route untuk login
 Route::get('/login', Login::class)
     ->name('login')
+    ->middleware('guest');
+
+// Route untuk pendaftaran siswa (dapat diakses publik)
+Route::get('/daftarsiswa', CreateCustomer::class)
+    ->name('daftarsiswa')
     ->middleware('guest');
 
 /*
@@ -35,6 +37,11 @@ Route::get('/login', Login::class)
 */
 
 Route::middleware(['auth'])->group(function () {
+    // Dashboard Route (tambahkan ini)
+    Route::get('/dashboard', function() {
+        return redirect()->route('datasiswa');
+    })->name('dashboard');
+    
     // Data Management Routes
     Route::get('/datasiswa', DataSiswa::class)->name('datasiswa');
     Route::get('/datasiswa/{customer}/edit', EditSiswa::class)->name('editSiswa');
@@ -58,6 +65,10 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
+// Ubah fallback route
 Route::fallback(function () {
-    return redirect('/daftarsiswa');
+    if (Auth::check()) {
+        return redirect('/dashboard');
+    }
+    return redirect('/login');
 });

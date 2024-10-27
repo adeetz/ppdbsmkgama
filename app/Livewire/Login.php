@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Auth;
 
 class Login extends Component
 {
-    public $email = '';
-    public $password = '';
+    public $email;
+    public $password;
     public $remember = false;
 
     protected $rules = [
@@ -22,35 +22,21 @@ class Login extends Component
         'password.required' => 'Password wajib diisi',
     ];
 
-    public function mount()
-    {
-        if (Auth::check()) {
-            return redirect()->intended('datasiswa');
-        }
-    }
-
     public function login()
     {
-        $credentials = $this->validate();
+        $this->validate();
 
         try {
             if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
                 session()->regenerate();
-                
-                return redirect()->intended('datasiswa')->with('success', 'Berhasil Login!');
+                return redirect()->intended('datasiswa');
             }
-
+            
             session()->flash('error', 'Email atau password salah!');
             
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan sistem. Silakan coba lagi.');
-            \Log::error('Login error: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan. Silakan coba lagi.');
         }
-    }
-
-    public function updated($propertyName)
-    {
-        $this->validateOnly($propertyName);
     }
 
     public function render()
