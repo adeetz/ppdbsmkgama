@@ -19,32 +19,45 @@
             </div>
         @endif
 
+        @if (session()->has('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <!-- Tabel Data -->
-        <table class="table table-striped table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th style="width: 150px;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($users as $user)
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="thead-light">
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>
-                            <button wire:click="confirmDelete({{ $user->id }})" class="btn btn-danger btn-sm">
-                                <ion-icon name="trash-bin-sharp" style="font-size: 18px; margin-right: 5px;"></ion-icon>
-                                Hapus
-                            </button>
-                        </td>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th style="width: 150px;">Action</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse ($users as $user)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>
+                                <button wire:click="confirmDelete({{ $user->id }})" class="btn btn-danger btn-sm">
+                                    <ion-icon name="trash-bin-sharp" style="font-size: 18px; margin-right: 5px;"></ion-icon>
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center py-3">Tidak ada data pengguna</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
         <!-- Pagination -->
         <div class="d-flex justify-content-center mt-4">
@@ -52,3 +65,39 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('swal:confirm', (data) => {
+            Swal.fire({
+                title: data[0].title,
+                text: data[0].text,
+                icon: data[0].type,
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Dispatch event ke Livewire
+                    @this.hapusUser(data[0].id);
+                    
+                    // Tampilkan pesan sukses
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Terhapus!',
+                        text: 'Data pengguna berhasil dihapus.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
+    });
+</script>
+@endpush
