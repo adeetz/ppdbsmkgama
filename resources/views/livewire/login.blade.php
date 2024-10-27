@@ -15,7 +15,7 @@
             width: 100vw;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
@@ -84,6 +84,7 @@
             height: 55px;
             transition: all 0.3s ease;
             font-size: 16px;
+            width: 100%;
         }
 
         .form-floating input:focus {
@@ -154,10 +155,27 @@
         @media (max-width: 768px) {
             .login-container {
                 padding: 10px;
+                position: absolute;
+                overflow-x: hidden;
+                width: 100%;
+            }
+
+            .container {
+                padding: 0;
             }
 
             .login-card {
-                margin: 10px;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .form-floating input {
+                width: 100%;
+                box-sizing: border-box;
             }
         }
     </style>
