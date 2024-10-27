@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Ubah redirect dari home
+// Ubah redirect dari home ke daftarsiswa
 Route::get('/', function () {
-    return redirect('/login'); // Ubah ke login sebagai default
+    return redirect('/daftarsiswa'); // Diubah ke daftarsiswa sebagai default
 })->middleware('guest');
 
 // Route untuk login
@@ -65,10 +65,10 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-// Ubah fallback route
+// Ubah fallback route untuk mengarahkan ke daftarsiswa
 Route::fallback(function () {
     if (Auth::check()) {
         return redirect('/dashboard');
     }
-    return redirect('/login');
+    return redirect('/daftarsiswa');
 });
